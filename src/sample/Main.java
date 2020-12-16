@@ -88,6 +88,7 @@ public class Main extends Application {
     }
     private static class MenuItem extends StackPane{
         public  MenuItem(String name){
+
             Rectangle bg = new Rectangle(500,70,Color.WHITE);
             bg.setOpacity(0.5);
             bg.setTranslateX(700);
