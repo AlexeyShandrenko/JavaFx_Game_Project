@@ -21,8 +21,8 @@ public class SmallInfoLabel extends Label {
     public SmallInfoLabel(String text) {
         setPrefWidth(130);
         setPrefHeight(50);
-        BackgroundImage backgroundImage = new BackgroundImage(new Image("/cars_runner/view/resources/grey_button06.png", 130, 50, false, true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
+        BackgroundImage backgroundImage = new BackgroundImage(new Image("/cars_runner/view/resources/grey_button06.png", 130, 50, false, false),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, null);
         setBackground(new Background(backgroundImage));
         setAlignment(Pos.CENTER_LEFT);
         setPadding(new Insets(10, 10, 10, 10));

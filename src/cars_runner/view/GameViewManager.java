@@ -28,8 +28,6 @@ public class GameViewManager {
 
     private boolean isLeftKeyPressed;
     private boolean isRightKeyPressed;
-    private boolean isForwardKeyPressed;
-    private boolean isBackKeyPressed;
     private int angle;
     private AnimationTimer gameTimer;
 
@@ -61,13 +59,16 @@ public class GameViewManager {
     Random randomPositionGenerator;
 
     private ImageView fuel;
+//    private ImageView heart;
     private SmallInfoLabel pointsLabel;
     private ImageView[] playerLifes;
     private int playerLife;
     private int points;
-    private final static String FUEL_IMAGE = "/cars_runner/view/resources/platformPack_item017.png";
+    private final static String FUEL_IMAGE = "/cars_runner/view/resources/fuel.png";
+//    private final static String HEART_IMAGE = "/cars_runner/view/resources/platformPack_item017.png";
 
     private final static int FUEL_RADIUS = 12;
+//    private final static int HEART_RADIUS = 12;
     private final static int CAR_RADIUS = 27;
     private final static int OVERCOMES_RADIUS = 20;
 
@@ -122,6 +123,9 @@ public class GameViewManager {
 
     private void createGameElements(Car choosenCar) {
         playerLife = 2;
+//        heart = new ImageView(HEART_IMAGE);
+//        setNewElementPosition(heart);
+//        gamePane.getChildren().add(heart);
         fuel = new ImageView(FUEL_IMAGE);
         setNewElementPosition(fuel);
         gamePane.getChildren().add(fuel);
@@ -190,8 +194,10 @@ public class GameViewManager {
     private void moveGameElements() {
         fuel.setLayoutY(fuel.getLayoutY() + 5);
 
+//        heart.setLayoutY(heart.getLayoutY() + 5);
+
         for (int i = 0; i < blackCars.length; i++) {
-            blackCars[i].setLayoutY(blackCars[i].getLayoutY() + 7);
+            blackCars[i].setLayoutY(blackCars[i].getLayoutY() + 12);
         }
 
         for (int i = 0; i < blueCars.length; i++) {
@@ -199,23 +205,23 @@ public class GameViewManager {
         }
 
         for (int i = 0; i < greenCars.length; i++) {
-            greenCars[i].setLayoutY(greenCars[i].getLayoutY() + 7);
+            greenCars[i].setLayoutY(greenCars[i].getLayoutY() + 9);
         }
 
         for (int i = 0; i < redCars.length; i++) {
-            redCars[i].setLayoutY(redCars[i].getLayoutY() + 7);
+            redCars[i].setLayoutY(redCars[i].getLayoutY() + 11);
         }
 
         for (int i = 0; i < greenMotorcycles.length; i++) {
-            greenMotorcycles[i].setLayoutY(greenMotorcycles[i].getLayoutY() + 7);
+            greenMotorcycles[i].setLayoutY(greenMotorcycles[i].getLayoutY() + 15);
         }
 
         for (int i = 0; i < redMotorcycles.length; i++) {
-            redMotorcycles[i].setLayoutY(redMotorcycles[i].getLayoutY() + 7);
+            redMotorcycles[i].setLayoutY(redMotorcycles[i].getLayoutY() + 20);
         }
 
         for (int i = 0; i < blueMotorcycles.length; i++) {
-            blueMotorcycles[i].setLayoutY(blueMotorcycles[i].getLayoutY() + 7);
+            blueMotorcycles[i].setLayoutY(blueMotorcycles[i].getLayoutY() + 12);
         }
     }
 
@@ -223,6 +229,10 @@ public class GameViewManager {
         if (fuel.getLayoutY() > 1200) {
             setNewElementPosition(fuel);
         }
+
+//        if (heart.getLayoutY() > 1200) {
+//            setNewElementPosition(heart);
+//        }
 
         for (int i = 0; i < blackCars.length; i++) {
             if (blackCars[i].getLayoutY() > 900) {
@@ -304,7 +314,7 @@ public class GameViewManager {
             }
             car.setRotate(angle);
             if (car.getLayoutX() > -20) {
-                car.setLayoutX(car.getLayoutX() - 3);
+                car.setLayoutX(car.getLayoutX() - 6);
             }
         }
 
@@ -315,7 +325,7 @@ public class GameViewManager {
             car.setRotate(angle);
 
             if (car.getLayoutX() < 522) {
-                car.setLayoutX(car.getLayoutX() + 3);
+                car.setLayoutX(car.getLayoutX() + 6);
             }
         }
 
@@ -357,8 +367,8 @@ public class GameViewManager {
     }
 
     private void moveBackground() {
-        gridPane1.setLayoutY(gridPane1.getLayoutY() + 4);
-        gridPane2.setLayoutY(gridPane2.getLayoutY() + 4);
+        gridPane1.setLayoutY(gridPane1.getLayoutY() + 6);
+        gridPane2.setLayoutY(gridPane2.getLayoutY() + 6);
 
         if (gridPane1.getLayoutY() >= 1024) {
             gridPane1.setLayoutY(-1024);
@@ -370,7 +380,7 @@ public class GameViewManager {
     }
 
     private void checkIfElementCollide() {
-        if (CAR_RADIUS + FUEL_RADIUS > calculateDistance(car.getLayoutX() + 49, car.getLayoutX() + 15, car.getLayoutY() + 37, car.getLayoutY() + 15)) {
+        if (CAR_RADIUS + FUEL_RADIUS > calculateDistance(car.getLayoutX() + 49, fuel.getLayoutX() + 15, car.getLayoutY() + 37, fuel.getLayoutY() + 15)) {
             setNewElementPosition(fuel);
 
             points++;
@@ -379,7 +389,19 @@ public class GameViewManager {
                 textToSet = textToSet + "0";
             }
             pointsLabel.setText(textToSet + points);
+            
         }
+
+//        if (CAR_RADIUS + HEART_RADIUS > calculateDistance(car.getLayoutX() + 49, heart.getLayoutX() + 15, car.getLayoutY() + 37, heart.getLayoutY() + 15)) {
+//            setNewElementPosition(heart);
+//
+//            for (int i = 0; i < playerLifes.length; i++) {
+//                if (playerLife < 3) {
+//                    playerLife++;
+//                }
+//            }
+//
+//        }
 
         for (int i = 0; i < blackCars.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, blackCars[i].getLayoutX() + 20, car.getLayoutY() + 37, blackCars[i].getLayoutY() + 20)) {
@@ -440,6 +462,11 @@ public class GameViewManager {
             menuStage.show();
         }
     }
+
+//    private void addLife() {
+//        gamePane.getChildren().add(playerLifes[playerLife]);
+//        playerLife++;
+//    }
 
     private double calculateDistance(double x1, double x2, double y1, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
