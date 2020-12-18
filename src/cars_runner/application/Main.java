@@ -1,5 +1,7 @@
 package cars_runner.application;
 
+import cars_runner.model.SoundEffects;
+import cars_runner.view.GameViewManager;
 import cars_runner.view.ViewManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -8,10 +10,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-//        primaryStage.setTitle("Hello World");
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
+
+
+        GameViewManager gameViewManager = new GameViewManager();
+        gameViewManager.playMusic();
+
 
         try {
             ViewManager manager = new ViewManager();

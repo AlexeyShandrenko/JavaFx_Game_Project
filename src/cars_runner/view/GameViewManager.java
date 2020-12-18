@@ -2,16 +2,42 @@ package cars_runner.view;
 
 import cars_runner.model.Car;
 import cars_runner.model.SmallInfoLabel;
+import cars_runner.model.SoundEffects;
 import javafx.animation.AnimationTimer;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import sun.audio.AudioData;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
+import sun.audio.ContinuousAudioDataStream;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Random;
 
 public class GameViewManager {
@@ -38,9 +64,9 @@ public class GameViewManager {
     private final static String BLACK_CAR = "/cars_runner/view/resources/overcomes/car_black_2.png";
     private final static String BLUE_CAR = "/cars_runner/view/resources/overcomes/car_blue_2.png";
     private final static String GREEN_CAR = "/cars_runner/view/resources/overcomes/car_green_4.png";
-    private final static String RED_CAR = "/cars_runner/view/resources/overcomes/car_red_1.png";
+    public final static String RED_CAR = "/cars_runner/view/resources/overcomes/car_red_1.png";
     private final static String YELLOW_CAR = "/cars_runner/view/resources/overcomes/car_yellow_3.png";
-    private final static String BLUE_MOTORCYCLE = "/cars_runner/view/resources/overcomes/motorcycle_blue.png";
+    public final static String BLUE_MOTORCYCLE = "/cars_runner/view/resources/overcomes/motorcycle_blue.png";
     private final static String GREEN_MOTORCYCLE = "/cars_runner/view/resources/overcomes/motorcycle_green.png";
     private final static String RED_MOTORCYCLE = "/cars_runner/view/resources/overcomes/motorcycle_red.png";
     private final static String OIL = "/cars_runner/view/resources/overcomes/oil.png";
@@ -59,18 +85,45 @@ public class GameViewManager {
     Random randomPositionGenerator;
 
     private ImageView fuel;
-//    private ImageView heart;
+    private ImageView heart;
     private SmallInfoLabel pointsLabel;
     private ImageView[] playerLifes;
-    private int playerLife;
+    private int playerLife = 3;
     private int points;
-    private final static String FUEL_IMAGE = "/cars_runner/view/resources/fuel.png";
-//    private final static String HEART_IMAGE = "/cars_runner/view/resources/platformPack_item017.png";
+    public final static String FUEL_IMAGE = "/cars_runner/view/resources/fuel.png";
+    public final static String HEART_IMAGE = "/cars_runner/view/resources/platformPack_item017.png";
 
     private final static int FUEL_RADIUS = 12;
-//    private final static int HEART_RADIUS = 12;
+    private final static int HEART_RADIUS = 12;
     private final static int CAR_RADIUS = 27;
     private final static int OVERCOMES_RADIUS = 20;
+
+    private static final String LIFE_LOST1 = "file:src/cars_runner/view/offf.mp3";
+    private static final String LIFE_LOST2 = "file:src/cars_runner/view/NO.mp3";
+    private static final String LIFE_ADD = "file:src/cars_runner/view/nice.mp3";
+
+    MediaPlayer mediaPlayer;
+
+    public void playMusic() {
+
+        String track = "D:\\Repository\\ProjectAboutGameOnJavaFx\\JavaFx_Game_Project\\src\\cars_runner\\view\\gameplay_music.mp3";
+        Media h = new Media(Paths.get(track).toUri().toString());
+        mediaPlayer = new MediaPlayer(h);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.setVolume(0.2);
+        mediaPlayer.play();
+
+    }
+
+    public void stopMusic() {
+
+        String track = "D:\\Repository\\ProjectAboutGameOnJavaFx\\JavaFx_Game_Project\\src\\cars_runner\\view\\gameplay_music.mp3";
+        Media h = new Media(Paths.get(track).toUri().toString());
+        mediaPlayer = new MediaPlayer(h);
+//        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.stop();
+
+    }
 
     public GameViewManager() {
         initializeStage();
@@ -109,6 +162,7 @@ public class GameViewManager {
         gameScene = new Scene(gamePane, GAME_WIDTH, GAME_HEIGHT);
         gameStage = new Stage();
         gameStage.setScene(gameScene);
+        gameStage.setResizable(false);
     }
 
     public void createNewGame(Stage menuStage, Car choosenCar) {
@@ -122,10 +176,10 @@ public class GameViewManager {
     }
 
     private void createGameElements(Car choosenCar) {
-        playerLife = 2;
-//        heart = new ImageView(HEART_IMAGE);
-//        setNewElementPosition(heart);
-//        gamePane.getChildren().add(heart);
+//        playerLife = 2;
+        heart = new ImageView(HEART_IMAGE);
+        setNewElementPosition(heart);
+        gamePane.getChildren().add(heart);
         fuel = new ImageView(FUEL_IMAGE);
         setNewElementPosition(fuel);
         gamePane.getChildren().add(fuel);
@@ -194,26 +248,26 @@ public class GameViewManager {
     private void moveGameElements() {
         fuel.setLayoutY(fuel.getLayoutY() + 5);
 
-//        heart.setLayoutY(heart.getLayoutY() + 5);
+        heart.setLayoutY(heart.getLayoutY() + 5);
 
         for (int i = 0; i < blackCars.length; i++) {
-            blackCars[i].setLayoutY(blackCars[i].getLayoutY() + 12);
+            blackCars[i].setLayoutY(blackCars[i].getLayoutY() + 15);
         }
 
         for (int i = 0; i < blueCars.length; i++) {
-            blueCars[i].setLayoutY(blueCars[i].getLayoutY() + 7);
+            blueCars[i].setLayoutY(blueCars[i].getLayoutY() + 12);
         }
 
         for (int i = 0; i < greenCars.length; i++) {
-            greenCars[i].setLayoutY(greenCars[i].getLayoutY() + 9);
+            greenCars[i].setLayoutY(greenCars[i].getLayoutY() + 14);
         }
 
         for (int i = 0; i < redCars.length; i++) {
-            redCars[i].setLayoutY(redCars[i].getLayoutY() + 11);
+            redCars[i].setLayoutY(redCars[i].getLayoutY() + 12);
         }
 
         for (int i = 0; i < greenMotorcycles.length; i++) {
-            greenMotorcycles[i].setLayoutY(greenMotorcycles[i].getLayoutY() + 15);
+            greenMotorcycles[i].setLayoutY(greenMotorcycles[i].getLayoutY() + 17);
         }
 
         for (int i = 0; i < redMotorcycles.length; i++) {
@@ -221,7 +275,7 @@ public class GameViewManager {
         }
 
         for (int i = 0; i < blueMotorcycles.length; i++) {
-            blueMotorcycles[i].setLayoutY(blueMotorcycles[i].getLayoutY() + 12);
+            blueMotorcycles[i].setLayoutY(blueMotorcycles[i].getLayoutY() + 16);
         }
     }
 
@@ -230,9 +284,9 @@ public class GameViewManager {
             setNewElementPosition(fuel);
         }
 
-//        if (heart.getLayoutY() > 1200) {
-//            setNewElementPosition(heart);
-//        }
+        if (heart.getLayoutY() > 1200) {
+            setNewElementPosition(heart);
+        }
 
         for (int i = 0; i < blackCars.length; i++) {
             if (blackCars[i].getLayoutY() > 900) {
@@ -381,30 +435,49 @@ public class GameViewManager {
 
     private void checkIfElementCollide() {
         if (CAR_RADIUS + FUEL_RADIUS > calculateDistance(car.getLayoutX() + 49, fuel.getLayoutX() + 15, car.getLayoutY() + 37, fuel.getLayoutY() + 15)) {
+            try {
+                SoundEffects.playSoundAdd(new URI(LIFE_ADD));
+            } catch (URISyntaxException e) {
+                System.out.println("Error");
+                e.printStackTrace();
+            }
             setNewElementPosition(fuel);
 
-            points++;
+            points += 2;
             String textToSet = "POINTS : ";
             if (points < 10) {
                 textToSet = textToSet + "0";
             }
             pointsLabel.setText(textToSet + points);
-            
+
         }
 
-//        if (CAR_RADIUS + HEART_RADIUS > calculateDistance(car.getLayoutX() + 49, heart.getLayoutX() + 15, car.getLayoutY() + 37, heart.getLayoutY() + 15)) {
-//            setNewElementPosition(heart);
-//
-//            for (int i = 0; i < playerLifes.length; i++) {
-//                if (playerLife < 3) {
-//                    playerLife++;
-//                }
-//            }
-//
-//        }
+        if (CAR_RADIUS + HEART_RADIUS > calculateDistance(car.getLayoutX() + 49, heart.getLayoutX() + 15, car.getLayoutY() + 37,
+                heart.getLayoutY() + 15)) {
+            try {
+                SoundEffects.playSoundAdd(new URI(LIFE_ADD));
+            } catch (URISyntaxException e) {
+                System.out.println("Error");
+                e.printStackTrace();
+            }
+            setNewElementPosition(heart);
+            points +=5;
+            String textToset = "Points: ";
+            if (points < 10) {
+                textToset += "0";
+            }
+            pointsLabel.setText(textToset + points);
+            addLife();
+        }
 
         for (int i = 0; i < blackCars.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, blackCars[i].getLayoutX() + 20, car.getLayoutY() + 37, blackCars[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost1(new URI(LIFE_LOST1));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(blackCars[i]);
             }
@@ -412,6 +485,12 @@ public class GameViewManager {
 
         for (int i = 0; i < blueCars.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, blueCars[i].getLayoutX() + 20, car.getLayoutY() + 37, blueCars[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost2(new URI(LIFE_LOST2));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(blueCars[i]);
             }
@@ -419,6 +498,12 @@ public class GameViewManager {
 
         for (int i = 0; i < greenCars.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, greenCars[i].getLayoutX() + 20, car.getLayoutY() + 37, greenCars[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost1(new URI(LIFE_LOST1));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(greenCars[i]);
             }
@@ -426,6 +511,12 @@ public class GameViewManager {
 
         for (int i = 0; i < redCars.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, redCars[i].getLayoutX() + 20, car.getLayoutY() + 37, redCars[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost1(new URI(LIFE_LOST1));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(redCars[i]);
             }
@@ -433,6 +524,12 @@ public class GameViewManager {
 
         for (int i = 0; i < blueMotorcycles.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, blueMotorcycles[i].getLayoutX() + 20, car.getLayoutY() + 37, blueMotorcycles[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost1(new URI(LIFE_LOST1));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(blueMotorcycles[i]);
             }
@@ -440,6 +537,12 @@ public class GameViewManager {
 
         for (int i = 0; i < greenMotorcycles.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, greenMotorcycles[i].getLayoutX() + 20, car.getLayoutY() + 37, greenMotorcycles[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost2(new URI(LIFE_LOST2));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(greenMotorcycles[i]);
             }
@@ -447,6 +550,12 @@ public class GameViewManager {
 
         for (int i = 0; i < redMotorcycles.length; i++) {
             if (OVERCOMES_RADIUS + CAR_RADIUS > calculateDistance(car.getLayoutX() + 49, redMotorcycles[i].getLayoutX() + 20, car.getLayoutY() + 37, redMotorcycles[i].getLayoutY() + 20)) {
+                try {
+                    SoundEffects.playSoundLost1(new URI(LIFE_LOST1));
+                } catch (URISyntaxException e) {
+                    System.out.println("Error");
+                    e.printStackTrace();
+                }
                 removeLife();
                 setNewElementPosition(redMotorcycles[i]);
             }
@@ -454,22 +563,29 @@ public class GameViewManager {
     }
 
     private void removeLife() {
-        gamePane.getChildren().remove(playerLifes[playerLife]);
+        gamePane.getChildren().remove(playerLifes[playerLife - 1]);
         playerLife--;
-        if (playerLife < 0) {
+        if (playerLife <= 0) {
             gameStage.close();
             gameTimer.stop();
-            menuStage.show();
+            SaveScoreViewManager saveScoreViewManager = new SaveScoreViewManager();
+            saveScoreViewManager.createScoreScene(menuStage, points, getBackgroundImage());
         }
     }
 
-//    private void addLife() {
-//        gamePane.getChildren().add(playerLifes[playerLife]);
-//        playerLife++;
-//    }
+    private String getBackgroundImage(){
+        return "/cars_runner/view/resources/parking.jpg";
+    }
 
     private double calculateDistance(double x1, double x2, double y1, double y2) {
         return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+    }
+
+    private void addLife() {
+        if (playerLife < 3) {
+            gamePane.getChildren().add(playerLifes[playerLife]);
+            playerLife++;
+        }
     }
 
 }

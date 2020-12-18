@@ -29,7 +29,7 @@ public class CarsRunnerSubscene extends SubScene {
         isHidden = true;
 
         setLayoutX(1500);
-        setLayoutY(230);
+        setLayoutY(270);
     }
 
     public void moveSubScene() {

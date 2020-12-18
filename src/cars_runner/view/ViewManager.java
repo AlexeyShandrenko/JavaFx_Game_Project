@@ -3,27 +3,37 @@ package cars_runner.view;
 import cars_runner.model.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ViewManager {
 
+    public final static String FONT_PATH = "src/cars_runner/model/resources/ui_pack/fonts/kenvector_future.ttf";
     private static final int WIDTH = 1160;
     private static final int HEIGHT = 904;
     private AnchorPane mainPane;
-    private Scene mainScene;
+    public Scene mainScene;
     private Stage mainStage;
 
     private final static int MENU_BUTTONS_START_X = 100;
-    private final static int MENU_BUTTONS_START_Y = 150;
+    private final static int MENU_BUTTONS_START_Y = 250;
 
     private CarsRunnerSubscene creditsSubscene;
     private CarsRunnerSubscene helpSubscene;
@@ -37,16 +47,21 @@ public class ViewManager {
     List<CarPicker> carsList;
     private Car choosenCar;
 
+    MediaPlayer mediaPlayer;
+
+    private static final String fileString = "src/cars_runner/model/score.txt";
+
+
     public ViewManager() {
         menuButtons = new ArrayList<>();
         mainPane = new AnchorPane();
         mainScene = new Scene(mainPane, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
-        createSubscenes();
         createButtons();
         createBackground();
         createLogo();
+        createSubscenes();
     }
 
     private void showSubScene(CarsRunnerSubscene subscene) {
@@ -59,19 +74,90 @@ public class ViewManager {
     }
 
     private void createSubscenes() {
-        creditsSubscene = new CarsRunnerSubscene();
-        mainPane.getChildren().add(creditsSubscene);
+//        creditsSubscene = new CarsRunnerSubscene();
+//        mainPane.getChildren().add(creditsSubscene);
 
-        helpSubscene = new CarsRunnerSubscene();
-        mainPane.getChildren().add(helpSubscene);
 
+//        helpSubscene = new CarsRunnerSubscene();
+//        mainPane.getChildren().add(helpSubscene);
+
+//        scoreSubscene = new CarsRunnerSubscene();
+//        mainPane.getChildren().add(scoreSubscene);
+
+        createCarChooserSubScene();
+        createScoreSubscene();
+        createHelpSubScene();
+        createCreditsSubscene();
+    }
+
+    private void createScoreSubscene() {
         scoreSubscene = new CarsRunnerSubscene();
         mainPane.getChildren().add(scoreSubscene);
 
-//        carChooserSubscene = new CarsRunnerSubscene();
-//        mainPane.getChildren().add(carChooserSubscene);
+        InfoLabel message = new InfoLabel("SCORES");
+        message.setLayoutX(120);
+        message.setLayoutY(20);
+        scoreSubscene.getPane().getChildren().add(message);
+        try {
+            File file = new File(fileString);
+            if (!file.exists()) file.createNewFile();
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String line;
+            int i = 0;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (!line.trim().equals("")) {
+                    TextLabel score = new TextLabel(line, 25);
+                    score.setLayoutX(40);
+                    score.setLayoutY(90 + i * 30);
+                    scoreSubscene.getPane().getChildren().add(score);
+                }
+                i++;
+            }
+            bufferedReader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        createCarChooserSubScene();
+    private void createHelpSubScene() {
+        helpSubscene = new CarsRunnerSubscene();
+        mainPane.getChildren().add(helpSubscene);
+        InfoLabel message = new InfoLabel("HELP");
+        message.setLayoutX(120);
+        message.setLayoutY(20);
+        String text = "Choose your car and start the game \non the start tab.\n\n" +
+                "Control your car with left and right.\n\n" +
+                "Avoid overcomes and collect fuels and hearts.\n\n" +
+                "Check your ranking on score tab.\n\n" +
+                "Press the exit button if you want \nto quit the game.";
+
+        TextLabel textLabel = new TextLabel(text, 17);
+        textLabel.setLayoutX(40);
+        textLabel.setLayoutY(90);
+        helpSubscene.getPane().getChildren().addAll(message, textLabel);
+    }
+
+    private void createCreditsSubscene() {
+        creditsSubscene = new CarsRunnerSubscene();
+        mainPane.getChildren().add(creditsSubscene);
+
+        InfoLabel credits = new InfoLabel("CREDITS");
+        credits.setLayoutX(120);
+        credits.setLayoutY(20);
+
+        String text = "University project by Shandrenko Alexey";
+
+        TextLabel textLabel = new TextLabel(text, 17);
+        textLabel.setLayoutX(40);
+        textLabel.setLayoutY(90);
+        creditsSubscene.getPane().getChildren().addAll(credits, textLabel);
+
+//        Label credit0 = new Label("University project by Alexey Shandrenko");
+//        credit0.setAlignment(Pos.CENTER);
+//        VBox creditsBox = new VBox(10, credit0);
+//        creditsBox.setLayoutX(50);
+//        creditsBox.setLayoutY(80);
+//        creditsSubscene.getPane().getChildren().addAll(credits, creditsBox);
     }
 
     private void createCarChooserSubScene() {
@@ -143,16 +229,17 @@ public class ViewManager {
     }
 
     private void createButtons() {
-        createOnePlayerButton();
-        createTwoPlayersButton();
+        createPlayButton();
+
+//        createTwoPlayersButton();
         createScoresButton();
         createHelpButton();
         createCreditsButton();
         createExitButton();
     }
 
-    private void createOnePlayerButton() {
-        CarsRunnerButton onePlayerButton = new CarsRunnerButton("1 PLAYER");
+    private void createPlayButton() {
+        CarsRunnerButton onePlayerButton = new CarsRunnerButton("PLAY");
         addMenuButton(onePlayerButton);
 
         onePlayerButton.setOnAction(new EventHandler<ActionEvent>() {
