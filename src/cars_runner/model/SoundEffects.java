@@ -8,8 +8,8 @@ public class SoundEffects {
 
     private static double VOL_LOST1 = 10;
     private static double VOL_LOST2 = 10;
-    private static double VOL_ADD = 30;
-    private static double VOL_MAIN = 0.5;
+    private static double VOL_ADD = 300;
+    private static double VOL_MAIN = 0.2;
 
     public static void playSoundLost1(URI sound) {
         AudioClip clip = new AudioClip(sound.toString());

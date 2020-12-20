@@ -1,6 +1,7 @@
 package cars_runner.application;
 
 import cars_runner.model.SoundEffects;
+import cars_runner.sockets.SocketClient;
 import cars_runner.view.GameViewManager;
 import cars_runner.view.ViewManager;
 import javafx.application.Application;
@@ -14,6 +15,8 @@ public class Main extends Application {
 
         GameViewManager gameViewManager = new GameViewManager();
         gameViewManager.playMusic();
+
+        SocketClient client = new SocketClient("localhost", 7477);
 
 
         try {
